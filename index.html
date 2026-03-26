@@ -1,487 +1,403 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Missouri Driver License – Official Preview</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background: #eef2f8;
-      font-family: 'Inter', sans-serif;
-      padding: 2rem 1rem;
-      color: #1f2937;
-    }
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-    .gov-header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .badge {
-      background: #002b54;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0.6rem 1.8rem;
-      border-radius: 60px;
-      color: white;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-    .generator-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: center;
-    }
-    .form-panel {
-      flex: 1;
-      min-width: 300px;
-      background: white;
-      border-radius: 28px;
-      padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    }
-    .preview-panel {
-      flex: 1.2;
-      min-width: 380px;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    label {
-      font-weight: 600;
-      font-size: 0.8rem;
-      color: #2c3e66;
-      display: block;
-      margin-bottom: 4px;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 24px;
-      border: 1px solid #cbd5e1;
-      font-family: inherit;
-      font-size: 0.9rem;
-    }
-    .photo-upload-area {
-      margin: 1.5rem 0;
-      text-align: center;
-    }
-    .upload-btn {
-      background: #f1f5f9;
-      border: 1px dashed #94a3b8;
-      border-radius: 40px;
-      padding: 8px 16px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-    }
-    .btn-primary {
-      background: #002b54;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      font-size: 1rem;
-      transition: 0.2s;
-      margin-top: 0.5rem;
-    }
-    .btn-primary:hover {
-      background: #0f3f6b;
-    }
-    .license-card {
-      background: white;
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.25);
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .card-ombre {
-      background: linear-gradient(105deg, #bf0a2f 0%, #ffffff 45%, #002b54 100%);
-      padding: 0.8rem 1.8rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-    }
-    .state-title {
-      font-size: 1.7rem;
-      font-weight: 800;
-      color: white;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-    }
-    .doc-type {
-      background: rgba(0,0,0,0.4);
-      padding: 4px 14px;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: white;
-    }
-    .card-body {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 1.5rem 1.8rem;
-      gap: 1.5rem;
-    }
-    .photo-section {
-      flex: 0 0 160px;
-      text-align: center;
-    }
-    .photo-frame {
-      width: 160px;
-      height: 190px;
-      background: #f4f7fc;
-      border: 2px solid #cbd5e6;
-      border-radius: 18px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .photo-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .photo-placeholder {
-      color: #7f8c8d;
-      font-size: 0.7rem;
-      text-align: center;
-    }
-    .info-grid {
-      flex: 1;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.7rem 1.2rem;
-    }
-    .field {
-      border-bottom: 1px solid #e9edf2;
-      padding-bottom: 3px;
-    }
-    .field-ref {
-      font-size: 0.6rem;
-      font-weight: 700;
-      background: #f0f2f5;
-      padding: 0 6px;
-      border-radius: 20px;
-      margin-right: 5px;
-      color: #a03141;
-    }
-    .field-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: #5a6874;
-    }
-    .field-value {
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: #0b2b40;
-      font-family: 'Roboto Mono', monospace;
-      word-break: break-word;
-    }
-    .badge-row {
-      padding: 0 1.8rem 0.5rem 1.8rem;
-      display: flex;
-      gap: 1rem;
-    }
-    .vet-badge, .donor-badge {
-      background: #f1f5f9;
-      padding: 4px 12px;
-      border-radius: 40px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #1e4a76;
-    }
-    .card-footer {
-      background: #fafcfd;
-      padding: 0.8rem 1.8rem;
-      border-top: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .barcode {
-      background: repeating-linear-gradient(90deg, #1e2a3a, #1e2a3a 2px, #e9ecef 2px, #e9ecef 8px);
-      height: 40px;
-      flex: 2;
-      min-width: 160px;
-      border-radius: 10px;
-    }
-    .security-text {
-      font-size: 0.6rem;
-      color: #6b7280;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    .action-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      flex-wrap: wrap;
-    }
-    .btn-pdf {
-      background: #dc2626;
-      color: white;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 10px 24px;
-      border-radius: 60px;
-      font-size: 0.8rem;
-      opacity: 0;
-      transition: 0.2s;
-      pointer-events: none;
-      z-index: 1000;
-    }
-    .toast.show {
-      opacity: 1;
-    }
-    @media (max-width: 850px) {
-      .generator-grid {
-        flex-direction: column;
-      }
-      .preview-panel {
-        min-width: auto;
-      }
-      .license-card {
-        max-width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Missouri Driver License – Official</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #eef2f8;
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .badge {
+            background: #002b54;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .form-panel {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .preview-panel {
+            flex: 1.2;
+            min-width: 380px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #2c3e66;
+            display: block;
+            margin-bottom: 4px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 24px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        .photo-upload {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        .upload-btn {
+            background: #f1f5f9;
+            border: 1px dashed #94a3b8;
+            border-radius: 40px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: #002b54;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .license-card {
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px -8px rgba(0,0,0,0.25);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .ombre {
+            background: linear-gradient(105deg, #bf0a2f 0%, #ffffff 45%, #002b54 100%);
+            padding: 0.8rem 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+        .state {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        .doctype {
+            background: rgba(0,0,0,0.4);
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+        .card-body {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 1.5rem 1.8rem;
+            gap: 1.5rem;
+        }
+        .photo-area {
+            flex: 0 0 160px;
+            text-align: center;
+        }
+        .photo-frame {
+            width: 160px;
+            height: 190px;
+            background: #f4f7fc;
+            border: 2px solid #cbd5e6;
+            border-radius: 18px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .fields-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.7rem 1.2rem;
+        }
+        .field {
+            border-bottom: 1px solid #e9edf2;
+            padding-bottom: 3px;
+        }
+        .ref {
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: #f0f2f5;
+            padding: 0 6px;
+            border-radius: 20px;
+            margin-right: 5px;
+            color: #a03141;
+        }
+        .label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #5a6874;
+        }
+        .value {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #0b2b40;
+            font-family: 'Roboto Mono', monospace;
+        }
+        .badges {
+            padding: 0 1.8rem 0.5rem 1.8rem;
+            display: flex;
+            gap: 1rem;
+        }
+        .vet, .donor {
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #1e4a76;
+        }
+        .footer {
+            background: #fafcfd;
+            padding: 0.8rem 1.8rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .barcode {
+            background: repeating-linear-gradient(90deg, #1e2a3a, #1e2a3a 2px, #e9ecef 2px, #e9ecef 8px);
+            height: 40px;
+            flex: 2;
+            min-width: 160px;
+            border-radius: 10px;
+        }
+        .security {
+            font-size: 0.6rem;
+            color: #6b7280;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .btn-pdf {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .toast.show { opacity: 1; }
+        @media (max-width: 850px) {
+            .grid { flex-direction: column; }
+            .preview-panel { min-width: auto; }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-  <div class="gov-header">
-    <div class="badge">
-      <i class="fas fa-id-card"></i> Missouri Department of Revenue – Official License Preview
-      <i class="fas fa-check-circle"></i>
+    <div class="header">
+        <div class="badge"><i class="fas fa-id-card"></i> Missouri Department of Revenue – Official License</div>
     </div>
-  </div>
-
-  <div class="generator-grid">
-    <div class="form-panel">
-      <h3 style="margin-bottom: 1rem; font-weight: 700;">License Data Entry</h3>
-      <div class="form-group"><label>Full Name (Last, First)</label><input type="text" id="fullName" value="THRASHER, BRIONNA"></div>
-      <div class="form-group"><label>License Number (DLT)</label><input type="text" id="licenseNum" value="500084608"></div>
-      <div class="form-group"><label>Address</label><input type="text" id="address" value="115 WILLA LANE, WINDSOR, MO 65360"></div>
-      <div class="form-group"><label>Date of Birth (MM/DD/YYYY)</label><input type="text" id="dob" value="06/15/1994"></div>
-      <div class="form-group"><label>Issue Date</label><input type="text" id="issueDate" value="08/12/2020"></div>
-      <div class="form-group"><label>Expiration Date</label><input type="text" id="expDate" value="08/12/2028"></div>
-      <div class="form-group"><label>Sex</label><select id="sex"><option value="F">F</option><option value="M">M</option></select></div>
-      <div class="form-group"><label>Height (ft'in")</label><input type="text" id="height" value="5' 05&quot;"></div>
-      <div class="form-group"><label>Eyes</label><input type="text" id="eyes" value="BRO"></div>
-      <div class="form-group"><label>Endorsements</label><input type="text" id="endorse" value="NONE"></div>
-      <div class="form-group"><label>Restrictions</label><input type="text" id="restrict" value="A (CORRECTIVE LENSES)"></div>
-      <div class="form-group"><label>Audit / DD Number</label><input type="text" id="audit" value="101230320002"></div>
-      <div class="form-group"><label>Class</label><input type="text" id="classVal" value="D"></div>
-      <div class="form-group"><label>Weight (lb) optional</label><input type="text" id="weight" value="145"></div>
-      <div class="photo-upload-area">
-        <div class="upload-btn" id="uploadPhotoBtn"><i class="fas fa-camera"></i> Upload License Photo</div>
-        <input type="file" id="photoFile" accept="image/*" style="display: none;">
-        <p style="font-size:0.7rem; margin-top:8px;">Click to add/change photo (real preview)</p>
-      </div>
-      <button type="button" id="refreshCardBtn" class="btn-primary"><i class="fas fa-sync-alt"></i> Update License Card</button>
-    </div>
-
-    <div class="preview-panel">
-      <div class="license-card" id="licenseCardPreview">
-        <div class="card-ombre">
-          <div class="state-title">MISSOURI</div>
-          <div class="doc-type">DRIVER LICENSE</div>
+    <div class="grid">
+        <div class="form-panel">
+            <h3>License Data Entry</h3>
+            <div class="form-group"><label>Full Name (Last, First)</label><input type="text" id="fullName" value="THRASHER, BRIONNA"></div>
+            <div class="form-group"><label>License Number (DLT)</label><input type="text" id="licenseNum" value="500084608"></div>
+            <div class="form-group"><label>Address</label><input type="text" id="address" value="115 WILLA LANE, WINDSOR, MO 65360"></div>
+            <div class="form-group"><label>Date of Birth (MM/DD/YYYY)</label><input type="text" id="dob" value="06/15/1994"></div>
+            <div class="form-group"><label>Issue Date</label><input type="text" id="issueDate" value="08/12/2020"></div>
+            <div class="form-group"><label>Expiration Date</label><input type="text" id="expDate" value="08/12/2028"></div>
+            <div class="form-group"><label>Sex</label><select id="sex"><option value="F">F</option><option value="M">M</option></select></div>
+            <div class="form-group"><label>Height (ft'in")</label><input type="text" id="height" value="5' 05&quot;"></div>
+            <div class="form-group"><label>Eyes</label><input type="text" id="eyes" value="BRO"></div>
+            <div class="form-group"><label>Endorsements</label><input type="text" id="endorse" value="NONE"></div>
+            <div class="form-group"><label>Restrictions</label><input type="text" id="restrict" value="A (CORRECTIVE LENSES)"></div>
+            <div class="form-group"><label>Audit / DD Number</label><input type="text" id="audit" value="101230320002"></div>
+            <div class="form-group"><label>Class</label><input type="text" id="classVal" value="D"></div>
+            <div class="form-group"><label>Weight (lb) optional</label><input type="text" id="weight" value="145"></div>
+            <div class="photo-upload"><div class="upload-btn" id="uploadBtn"><i class="fas fa-camera"></i> Upload Photo</div><input type="file" id="photoInput" accept="image/*" style="display:none"></div>
+            <button class="btn-primary" id="refreshBtn"><i class="fas fa-sync-alt"></i> Update Card</button>
         </div>
-        <div class="card-body">
-          <div class="photo-section">
-            <div class="photo-frame" id="previewPhotoFrame">
-              <div class="photo-placeholder"><i class="fas fa-user-circle" style="font-size: 3rem;"></i><br>Photo</div>
+        <div class="preview-panel">
+            <div class="license-card" id="licenseCard">
+                <div class="ombre"><div class="state">MISSOURI</div><div class="doctype">DRIVER LICENSE</div></div>
+                <div class="card-body">
+                    <div class="photo-area"><div class="photo-frame" id="photoFrame"><div class="photo-placeholder"><i class="fas fa-user-circle" style="font-size:3rem"></i><br>Photo</div></div></div>
+                    <div class="fields-grid" id="fieldsGrid"></div>
+                </div>
+                <div class="badges"><div class="vet"><i class="fas fa-flag-usa"></i> VETERAN</div><div class="donor"><i class="fas fa-heartbeat"></i> DONOR</div></div>
+                <div class="footer"><div class="barcode"></div><div class="security"><i class="fas fa-shield-alt"></i> Microprint • UV • Raised Text</div></div>
             </div>
-          </div>
-          <div class="info-grid" id="dynamicFields"></div>
+            <div class="actions"><button class="btn-pdf" id="pdfBtn"><i class="fas fa-file-pdf"></i> Download PDF</button></div>
         </div>
-        <div class="badge-row">
-          <div class="vet-badge"><i class="fas fa-flag-usa"></i> VETERAN</div>
-          <div class="donor-badge"><i class="fas fa-heartbeat"></i> DONOR</div>
-        </div>
-        <div class="card-footer">
-          <div class="barcode"></div>
-          <div class="security-text"><i class="fas fa-shield-alt"></i> Microprint • UV • Raised Text</div>
-        </div>
-      </div>
-      <div class="action-buttons">
-        <button class="btn-pdf" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> Download as PDF (Full Card)</button>
-      </div>
     </div>
-  </div>
-  <div style="text-align: center; margin-top: 1rem; font-size:0.7rem; color:#4b5563;">
-    <i class="fas fa-info-circle"></i> Official Missouri driver license preview – all fields editable, photo upload, PDF export.
-  </div>
 </div>
-
 <div id="toastMsg" class="toast"></div>
-
 <script>
-  // DOM references
-  const fullName = document.getElementById('fullName');
-  const licenseNum = document.getElementById('licenseNum');
-  const address = document.getElementById('address');
-  const dob = document.getElementById('dob');
-  const issueDate = document.getElementById('issueDate');
-  const expDate = document.getElementById('expDate');
-  const sex = document.getElementById('sex');
-  const height = document.getElementById('height');
-  const eyes = document.getElementById('eyes');
-  const endorse = document.getElementById('endorse');
-  const restrict = document.getElementById('restrict');
-  const audit = document.getElementById('audit');
-  const classVal = document.getElementById('classVal');
-  const weight = document.getElementById('weight');
-  const dynamicGrid = document.getElementById('dynamicFields');
-  const previewPhotoFrame = document.getElementById('previewPhotoFrame');
-  const photoFile = document.getElementById('photoFile');
-  const uploadBtn = document.getElementById('uploadPhotoBtn');
-  const refreshBtn = document.getElementById('refreshCardBtn');
-  const downloadBtn = document.getElementById('downloadPdfBtn');
-  let currentPhotoData = null;
+    const fullName = document.getElementById('fullName');
+    const licenseNum = document.getElementById('licenseNum');
+    const address = document.getElementById('address');
+    const dob = document.getElementById('dob');
+    const issueDate = document.getElementById('issueDate');
+    const expDate = document.getElementById('expDate');
+    const sex = document.getElementById('sex');
+    const height = document.getElementById('height');
+    const eyes = document.getElementById('eyes');
+    const endorse = document.getElementById('endorse');
+    const restrict = document.getElementById('restrict');
+    const audit = document.getElementById('audit');
+    const classVal = document.getElementById('classVal');
+    const weight = document.getElementById('weight');
+    const fieldsGrid = document.getElementById('fieldsGrid');
+    const photoFrame = document.getElementById('photoFrame');
+    const photoInput = document.getElementById('photoInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
+    let currentPhoto = null;
 
-  function showToast(msg, bg = '#1e293b') {
-    const toast = document.getElementById('toastMsg');
-    toast.textContent = msg;
-    toast.style.backgroundColor = bg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function updateCard() {
-    let fullNameVal = fullName.value.trim();
-    let lastName = '', firstName = '';
-    if (fullNameVal.includes(',')) {
-      let parts = fullNameVal.split(',');
-      lastName = parts[0].trim();
-      firstName = parts[1] ? parts[1].trim() : '';
-    } else {
-      lastName = fullNameVal;
-      firstName = '';
+    function showToast(msg, bg='#1e293b') {
+        const t = document.getElementById('toastMsg');
+        t.textContent = msg; t.style.backgroundColor = bg;
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'),3000);
     }
-    const fields = [
-      { ref: '9', label: 'CLASS', value: classVal.value },
-      { ref: '4D', label: 'DLT NO.', value: licenseNum.value },
-      { ref: '1', label: 'LAST NAME', value: lastName },
-      { ref: '2', label: 'FIRST NAME', value: firstName },
-      { ref: '8', label: 'ADDRESS', value: address.value },
-      { ref: '9a', label: 'ENDORSEMENTS', value: endorse.value },
-      { ref: '12', label: 'RESTRICTIONS', value: restrict.value },
-      { ref: '15', label: 'SEX', value: sex.value },
-      { ref: '16', label: 'HEIGHT', value: height.value },
-      { ref: '18', label: 'EYES', value: eyes.value },
-      { ref: '4b', label: 'EXPIRES', value: expDate.value },
-      { ref: '3', label: 'DOB', value: dob.value },
-      { ref: '41', label: 'ISSUED', value: issueDate.value },
-      { ref: '5', label: 'DD / AUDIT', value: audit.value }
-    ];
-    if (weight.value.trim()) {
-      fields.push({ ref: '17', label: 'WEIGHT', value: weight.value + ' lb' });
+    function updateCard() {
+        let name = fullName.value.trim();
+        let last='', first='';
+        if(name.includes(',')) { let p=name.split(','); last=p[0].trim(); first=p[1]?p[1].trim():''; }
+        else { last=name; first=''; }
+        const fields = [
+            {ref:'9', label:'CLASS', val:classVal.value},
+            {ref:'4D', label:'DLT NO.', val:licenseNum.value},
+            {ref:'1', label:'LAST NAME', val:last},
+            {ref:'2', label:'FIRST NAME', val:first},
+            {ref:'8', label:'ADDRESS', val:address.value},
+            {ref:'9a', label:'ENDORSEMENTS', val:endorse.value},
+            {ref:'12', label:'RESTRICTIONS', val:restrict.value},
+            {ref:'15', label:'SEX', val:sex.value},
+            {ref:'16', label:'HEIGHT', val:height.value},
+            {ref:'18', label:'EYES', val:eyes.value},
+            {ref:'4b', label:'EXPIRES', val:expDate.value},
+            {ref:'3', label:'DOB', val:dob.value},
+            {ref:'41', label:'ISSUED', val:issueDate.value},
+            {ref:'5', label:'DD / AUDIT', val:audit.value}
+        ];
+        if(weight.value.trim()) fields.push({ref:'17', label:'WEIGHT', val:weight.value+' lb'});
+        fieldsGrid.innerHTML = '';
+        fields.forEach(f=>{
+            const div = document.createElement('div');
+            div.className = 'field';
+            div.innerHTML = `<span class="ref">${f.ref}</span> <span class="label">${f.label}</span><div class="value">${f.val||'—'}</div>`;
+            fieldsGrid.appendChild(div);
+        });
     }
-    dynamicGrid.innerHTML = '';
-    fields.forEach(f => {
-      const div = document.createElement('div');
-      div.className = 'field';
-      div.innerHTML = `<span class="field-ref">${f.ref}</span> <span class="field-label">${f.label}</span>
-                      <div class="field-value">${f.value || '—'}</div>`;
-      dynamicGrid.appendChild(div);
+    uploadBtn.addEventListener('click',()=>photoInput.click());
+    photoInput.addEventListener('change',e=>{
+        if(e.target.files && e.target.files[0]){
+            const file = e.target.files[0];
+            if(file.type.startsWith('image/')){
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    currentPhoto = ev.target.result;
+                    photoFrame.innerHTML = `<img src="${currentPhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                    showToast('Photo uploaded','#0f5c2e');
+                };
+                reader.readAsDataURL(file);
+            } else alert('Select image file');
+        }
     });
-  }
-
-  uploadBtn.addEventListener('click', () => photoFile.click());
-  photoFile.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          currentPhotoData = ev.target.result;
-          previewPhotoFrame.innerHTML = `<img src="${currentPhotoData}" alt="License photo" style="width:100%; height:100%; object-fit:cover;">`;
-          showToast('Photo uploaded successfully', '#0f5c2e');
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert('Please select a valid image file');
-      }
-    }
-  });
-
-  refreshBtn.addEventListener('click', () => {
+    refreshBtn.addEventListener('click',()=>{ updateCard(); showToast('Updated','#002b54'); });
+    pdfBtn.addEventListener('click', async ()=>{
+        const card = document.getElementById('licenseCard');
+        if(!card) return;
+        pdfBtn.disabled=true;
+        pdfBtn.innerHTML='<i class="fas fa-spinner fa-pulse"></i> Generating...';
+        await new Promise(r=>setTimeout(r,100));
+        try {
+            const canvas = await html2canvas(card,{scale:3,backgroundColor:'#fff',logging:false,useCORS:true});
+            const imgData = canvas.toDataURL('image/png');
+            const {jsPDF} = window.jspdf;
+            const pdf = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+            const imgW = 210;
+            const imgH = (canvas.height*imgW)/canvas.width;
+            let yOff = 20; if(imgH>140) yOff=10;
+            pdf.addImage(imgData,'PNG',10,yOff,imgW-20,imgH-10);
+            pdf.save('Missouri_DL.pdf');
+            showToast('PDF saved','#0f5c2e');
+        } catch(err) { showToast('PDF error','#b91c1c'); }
+        finally { pdfBtn.disabled=false; pdfBtn.innerHTML='<i class="fas fa-file-pdf"></i> Download PDF'; }
+    });
+    [fullName,licenseNum,address,dob,issueDate,expDate,height,eyes,endorse,restrict,audit,classVal,weight,sex].forEach(inp=>inp.addEventListener('input',updateCard));
+    sex.addEventListener('change',updateCard);
     updateCard();
-    showToast('License card updated with current data', '#002b54');
-  });
-
-  downloadBtn.addEventListener('click', async () => {
-    const card = document.getElementById('licenseCardPreview');
-    if (!card) return;
-    try {
-      downloadBtn.disabled = true;
-      downloadBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating PDF...';
-      await new Promise(r => setTimeout(r, 100));
-      const canvas = await html2canvas(card, { scale: 3, backgroundColor: '#ffffff', logging: false, useCORS: true });
-      const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let yOffset = 20;
-      if (imgHeight > 140) yOffset = 10;
-      pdf.addImage(imgData, 'PNG', 10, yOffset, imgWidth - 20, imgHeight - 10);
-      pdf.save('Missouri_DL_Preview.pdf');
-      showToast('PDF downloaded successfully', '#0f5c2e');
-    } catch (err) {
-      console.error(err);
-      showToast('Error generating PDF. Please try again.', '#b91c1c');
-    } finally {
-      downloadBtn.disabled = false;
-      downloadBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Download as PDF (Full Card)';
-    }
-  });
-
-  const allInputs = [fullName, licenseNum, address, dob, issueDate, expDate, height, eyes, endorse, restrict, audit, classVal, weight, sex];
-  allInputs.forEach(inp => inp.addEventListener('input', updateCard));
-  sex.addEventListener('change', updateCard);
-  updateCard();
 </script>
 </body>
-    </html>        
+</html>
