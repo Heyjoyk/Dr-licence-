@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Missouri Driver License – Realistic Preview</title>
+  <title>Missouri Driver License – Official Preview</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -122,6 +122,7 @@
       width: 100%;
       max-width: 600px;
       margin: 0 auto;
+      transition: transform 0.2s;
     }
     .card-ombre {
       background: linear-gradient(105deg, #bf0a2f 0%, #ffffff 45%, #002b54 100%);
@@ -321,6 +322,7 @@
       <div class="form-group"><label>Restrictions</label><input type="text" id="restrict" value="A (CORRECTIVE LENSES)"></div>
       <div class="form-group"><label>Audit / DD Number</label><input type="text" id="audit" value="101230320002"></div>
       <div class="form-group"><label>Class</label><input type="text" id="classVal" value="D"></div>
+      <div class="form-group"><label>Weight (lb) optional</label><input type="text" id="weight" value="145"></div>
       <div class="photo-upload-area">
         <div class="upload-btn" id="uploadPhotoBtn"><i class="fas fa-camera"></i> Upload License Photo</div>
         <input type="file" id="photoFile" accept="image/*" style="display: none;">
@@ -351,7 +353,6 @@
           <div class="barcode"></div>
           <div class="security-text"><i class="fas fa-shield-alt"></i> Microprint • UV • Raised Text</div>
         </div>
-        <!-- ডিসক্লেইমার সম্পূর্ণ মুছে দেওয়া হয়েছে -->
       </div>
       <div class="action-buttons">
         <button class="btn-pdf" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> Download as PDF (Full Card)</button>
@@ -380,6 +381,7 @@
   const restrict = document.getElementById('restrict');
   const audit = document.getElementById('audit');
   const classVal = document.getElementById('classVal');
+  const weight = document.getElementById('weight');
   const dynamicGrid = document.getElementById('dynamicFields');
   const previewPhotoFrame = document.getElementById('previewPhotoFrame');
   const photoFile = document.getElementById('photoFile');
@@ -423,6 +425,10 @@
       { ref: '41', label: 'ISSUED', value: issueDate.value },
       { ref: '5', label: 'DD / AUDIT', value: audit.value }
     ];
+    // Add weight if present
+    if (weight.value.trim()) {
+      fields.push({ ref: '17', label: 'WEIGHT', value: weight.value + ' lb' });
+    }
     dynamicGrid.innerHTML = '';
     fields.forEach(f => {
       const div = document.createElement('div');
@@ -462,11 +468,19 @@
     try {
       downloadBtn.disabled = true;
       downloadBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating PDF...';
-      const canvas = await html2canvas(card, { scale: 3, backgroundColor: '#ffffff', logging: false, useCORS: true });
+      // Slight delay to ensure any pending rendering is complete
+      await new Promise(r => setTimeout(r, 100));
+      const canvas = await html2canvas(card, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true,
+        allowTaint: false
+      });
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      const imgWidth = 210;
+      const imgWidth = 210; // A4 width in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let yOffset = 20;
       if (imgHeight > 140) yOffset = 10;
@@ -482,10 +496,10 @@
     }
   });
 
-  const allInputs = [fullName, licenseNum, address, dob, issueDate, expDate, height, eyes, endorse, restrict, audit, classVal, sex];
+  const allInputs = [fullName, licenseNum, address, dob, issueDate, expDate, height, eyes, endorse, restrict, audit, classVal, weight, sex];
   allInputs.forEach(inp => inp.addEventListener('input', updateCard));
   sex.addEventListener('change', updateCard);
   updateCard();
 </script>
 </body>
-</html>
+  </html>
